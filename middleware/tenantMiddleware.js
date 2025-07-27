@@ -1,24 +1,14 @@
-const mongoose = require("mongoose");
-const ProductSchema = require("../models/product");
+// middleware/tenantMiddleware.js
+const Tenant = require("../models/tenant");
+const getTenantDb = require("../utils/tenantDbManager");
 
-const connections = {};
+module.exports = async (req, res, next) => {
+  const tenantId = req.headers["x-tenant-id"];
+  if (!tenantId) return res.status(400).json({ message: "Missing tenant ID" });
 
-const getTenantDB = (tenantId) => {
-    if (!connections[tenantId]) {
-        const dbURI = `${process.env.MONGO_URI}/${tenantId}`;
-        const db = mongoose.createConnection(dbURI, { useNewUrlParser: true, useUnifiedTopology: true });
-        connections[tenantId] = {
-            db,
-            Product: db.model("Product", ProductSchema)
-        };
-    }
-    return connections[tenantId];
-};
+  const tenant = await Tenant.findOne({ name: tenantId });
+  if (!tenant) return res.status(404).json({ message: "Tenant not found" });
 
-module.exports = (req, res, next) => {
-    const tenantId = req.header("X-Tenant-ID");
-    if (!tenantId) return res.status(400).json({ message: "Missing tenant ID" });
-
-    req.tenant = getTenantDB(tenantId);
-    next();
+  req.db = await getTenantDb(tenant.name, tenant.dbUri);
+  next();
 };

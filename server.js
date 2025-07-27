@@ -1,32 +1,31 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const path = require("path");
-const connectDB = require("./config/db");
+const connectAdminDB = require("./config/db");
 
+const adminRoutes = require("./routes/adminRoutes"); // 💡 Rename tenantRoutes to adminRoutes
 const authRoutes = require("./routes/authRoutes");
-const tenantRoutes = require("./routes/tenantRoutes"); // ✅ renamed
-const productRoutes = require("./routes/productRoutes"); // ✅ unique
+const testimonialRoutes = require("./routes/testimonialRoutes");
+const galleryRoutes = require("./routes/galleryRoutes");
+const contactRoutes = require("./routes/contactRoutes");
+const tenantMiddleware = require("./middleware/tenantMiddleware");
 
 const app = express();
 
-// Middleware to handle CORS
-app.use(
-  cors({
-    origin: process.env.CLIENT_URL || "*",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
-
+app.use(cors());
 app.use(express.json());
 
-connectDB();
+connectAdminDB(); // Admin DB connection
 
-// Routes
-app.use("/api/v1/auth", authRoutes);
-app.use("/api/v1/tenant", tenantRoutes);      // ✅ renamed usage
-app.use("/api/v1/products", productRoutes);   // ✅ no conflict
+// 🌐 Admin routes (manage tenants)
+app.use("/api/v1/admin", adminRoutes);
 
+// 🌐 Tenant routes (dynamic DB middleware)
+app.use("/api/v1/auth", tenantMiddleware, authRoutes);
+app.use("/api/v1/testimonials", tenantMiddleware, testimonialRoutes);
+app.use("/api/v1/gallery", tenantMiddleware, galleryRoutes);
+app.use("/api/v1/contact", tenantMiddleware, contactRoutes);
+
+// 🚀 Server start
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

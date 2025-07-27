@@ -1,10 +1,9 @@
-const express = require('express');
-const AdminRouter = require('./admin-route');
-const AuthRouter = require('./auth-route');
+const express = require("express");
+const { getUserCount } = require("../controllers/dashboardController");
+const { resolveTenantDb } = require("../middleware/tenantMiddleware");
 
-const AppRouter = express.Router();
+const router = express.Router();
 
-AppRouter.use('/admin',AdminRouter)
-AppRouter.use('/auth',AuthRouter)
+router.get("/users/count", resolveTenantDb, getUserCount);
 
-module.exports = AppRouter;
+module.exports = router;
