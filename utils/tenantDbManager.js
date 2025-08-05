@@ -8,9 +8,14 @@ const getTenantDb = async (tenantName, uri) => {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
-
+  
   conn.model("User", require("../models/user"));
-  conn.model("Product", require("../models/product"));
+  conn.model("Blogs"),require("../models/blog");
+  conn.model("contact"),require("../models/contact");
+  conn.model("gallery"),require("../models/gallery");
+  conn.model("testimonial"),require("../models/testimonial");
+  
+  
 
   connections[tenantName] = conn;
   return conn;
