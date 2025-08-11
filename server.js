@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const connectAdminDB = require("./config/db");
+const connectDB = require("./config/db");
 
 const adminRoutes = require("./routes/adminRoutes"); // 💡 Rename tenantRoutes to adminRoutes
 const authRoutes = require("./routes/authRoutes");
@@ -15,7 +15,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-connectAdminDB(); // Admin DB connection
+connectDB(); // Admin DB connection
 
 // 🌐 Admin routes (manage tenants)
 app.use("/api/v1/admin", adminRoutes);
