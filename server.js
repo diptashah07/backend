@@ -25,6 +25,8 @@ app.use("/api/v1/auth", tenantMiddleware, authRoutes);
 app.use("/api/v1/testimonials", tenantMiddleware, testimonialRoutes);
 app.use("/api/v1/gallery", tenantMiddleware, galleryRoutes);
 app.use("/api/v1/contact", tenantMiddleware, contactRoutes);
+app.use("/api/v1/dashboard", tenantMiddleware, dashboardRoutes);
+app.use("/api/v1/blog", tenantMiddleware, blogRoutes);
 
 // 🚀 Server start
 const PORT = process.env.PORT || 5000;
